@@ -5,12 +5,13 @@ import io.horizontalsystems.bitcoincore.TransactionFilter
 import io.horizontalsystems.bitcoincore.WatchedTransactionManager
 import io.horizontalsystems.bitcoincore.extensions.toHexString
 import io.horizontalsystems.bitcoincore.extensions.toReversedHex
+import io.horizontalsystems.bitcoincore.io.BitcoinInput
+import io.horizontalsystems.bitcoincore.io.BitcoinOutput
 import io.horizontalsystems.bitcoincore.models.Transaction
 import io.horizontalsystems.bitcoincore.models.TransactionOutput
 import io.horizontalsystems.bitcoincore.storage.FullTransaction
 import io.horizontalsystems.bitcoincore.storage.UnspentOutput
 import io.horizontalsystems.bitcoincore.transactions.scripts.*
-import io.horizontalsystems.bitcoincore.utils.HashUtils
 import io.horizontalsystems.bitcoincore.utils.Utils
 import io.horizontalsystems.swapkit.atomicswap.*
 
@@ -42,8 +43,11 @@ class BitcoinSwapBlockchain(private val bitcoinKit: AbstractKit, private val scr
         val amountNumeric = amount.toDouble().times(100_000_000).toLong()
 
         val fullTransaction = bitcoinKit.send(scriptHash, ScriptType.P2SH, amountNumeric, true, feeRate)
+        val output = fullTransaction.outputs.first {
+            it.keyHash?.contentEquals(scriptHash) ?: false
+        }
 
-        return BitcoinBailTx(fullTransaction, scriptHash)
+        return BitcoinBailTx(fullTransaction.header.hash, output.index, output.lockingScript, amountNumeric, scriptHash)
     }
 
     override fun setBailTxListener(listener: ISwapBailTxListener, myRedeemPKH: ByteArray, secretHash: ByteArray, partnerRefundPKH: ByteArray, partnerRefundTime: Long) {
@@ -51,7 +55,8 @@ class BitcoinSwapBlockchain(private val bitcoinKit: AbstractKit, private val scr
 
         bitcoinKit.watchTransaction(TransactionFilter.P2SHOutput(scriptHash), object : WatchedTransactionManager.Listener {
             override fun onTransactionSeenP2SH(tx: FullTransaction, outputIndex: Int) {
-                listener.onBailTransactionSeen(BitcoinBailTx(tx, scriptHash))
+                val output = tx.outputs[outputIndex]
+                listener.onBailTransactionSeen(BitcoinBailTx(tx.header.hash, outputIndex, output.lockingScript, output.value, scriptHash))
             }
         })
     }
@@ -61,7 +66,7 @@ class BitcoinSwapBlockchain(private val bitcoinKit: AbstractKit, private val scr
 
         val publicKey = bitcoinKit.getPublicKeyByPath(myRedeemPKId)
 
-        val bailOutput = bailTx.getTransactionOutput()
+        val bailOutput = TransactionOutput(bailTx.amount, bailTx.outputIndex, bailTx.lockingScript, ScriptType.P2SH)
 
         val redeemScript = scriptBuilder.bailScript(myRedeemPKH, secretHash, partnerRefundPKH, partnerRefundTime)
         bailOutput.redeemScript = redeemScript
@@ -70,48 +75,73 @@ class BitcoinSwapBlockchain(private val bitcoinKit: AbstractKit, private val scr
             OpCodes.push(signature) + OpCodes.push(publicKeyHash) + OpCodes.push(secret) + OP_1.toByte() + OpCodes.push(redeemScript)
         }
 
-        return BitcoinRedeemTx(fullTransaction, bailOutput.transactionHash + bailOutput.index.toByte())
+        return BitcoinRedeemTx(fullTransaction.header.hash, secret)
     }
 
     override fun setRedeemTxListener(listener: ISwapRedeemTxListener, bailTx: BailTx) {
         bailTx as BitcoinBailTx
 
-        val transactionOutput = bailTx.getTransactionOutput()
-        val bailTxOutpoint = transactionOutput.transactionHash + bailTx.getTransactionOutput().index.toByte()
-
-        bitcoinKit.watchTransaction(TransactionFilter.Outpoint(transactionOutput.transactionHash, transactionOutput.index.toLong()), object : WatchedTransactionManager.Listener {
+        bitcoinKit.watchTransaction(TransactionFilter.Outpoint(bailTx.txHash, bailTx.outputIndex.toLong()), object : WatchedTransactionManager.Listener {
             override fun onTransactionSeenOutpoint(tx: FullTransaction, inputIndex: Int) {
-                listener.onRedeemTransactionSeen(BitcoinRedeemTx(tx, bailTxOutpoint))
+                listener.onRedeemTransactionSeen(BitcoinRedeemTx(tx.header.hash, byteArrayOf()))
             }
         })
     }
-}
 
-class BitcoinRedeemTx(val fullTransaction: FullTransaction, val bailTxOutpoint: ByteArray) : RedeemTx() {
-    init {
-        val input = fullTransaction.inputs.first {
-            (it.previousOutputTxHash + it.previousOutputIndex.toByte()).contentEquals(bailTxOutpoint)
-        }
+    override fun serializeBailTx(bailTx: BailTx): ByteArray {
+        check(bailTx is BitcoinBailTx)
 
-        secret = HashUtils.sha256("supersecret".toByteArray())
+        return BitcoinOutput()
+            .write(bailTx.txHash)
+            .writeInt(bailTx.outputIndex)
+            .writeLong(bailTx.amount)
+            .writeVarInt(bailTx.lockingScript.size.toLong())
+            .write(bailTx.lockingScript)
+            .write(bailTx.scriptHash)
+            .toByteArray()
     }
 
-    override fun toString(): String {
-        return "txHash: ${fullTransaction.header.hash.toReversedHex()}"
-    }
-}
+    override fun deserializeBailTx(data: ByteArray): BailTx {
+        return BitcoinInput(data).use { input ->
+            val txHash = input.readBytes(32)
+            val outputIndex = input.readInt()
+            val amount = input.readLong()
+            val lockingScript = input.readBytes(input.readVarInt().toInt())
+            val scriptHash = input.readBytes(20)
 
-class BitcoinBailTx(val fullTransaction: FullTransaction, val scriptHash: ByteArray) : BailTx() {
-
-    override fun toString(): String {
-        return "txHash: ${fullTransaction.header.hash.toReversedHex()}, scriptHash: ${scriptHash.toHexString()}"
-    }
-
-    fun getTransactionOutput(): TransactionOutput {
-        return fullTransaction.outputs.first {
-            it.keyHash?.contentEquals(scriptHash) ?: false
+            BitcoinBailTx(txHash, outputIndex, lockingScript, amount, scriptHash)
         }
     }
+
+    override fun serializeRedeemTx(redeemTx: RedeemTx): ByteArray {
+        check(redeemTx is BitcoinRedeemTx)
+
+        return BitcoinOutput()
+            .write(redeemTx.txHash)
+            .write(redeemTx.secret)
+            .toByteArray()
+    }
+
+    override fun deserializeRedeemTx(data: ByteArray): RedeemTx {
+        return BitcoinInput(data).use {input ->
+            BitcoinRedeemTx(input.readBytes(32), input.readBytes(32))
+        }
+
+    }
+}
+
+class BitcoinRedeemTx(val txHash: ByteArray, override var secret: ByteArray) : RedeemTx() {
+    override fun toString(): String {
+        return "txHash: ${txHash.toReversedHex()}"
+    }
+}
+
+class BitcoinBailTx(val txHash: ByteArray, val outputIndex: Int, val lockingScript: ByteArray, val amount: Long, val scriptHash: ByteArray) : BailTx() {
+
+    override fun toString(): String {
+        return "txHash: ${txHash.toReversedHex()}, scriptHash: ${scriptHash.toHexString()}"
+    }
+
 }
 
 class SwapScriptBuilder {

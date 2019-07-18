@@ -7,6 +7,7 @@ class Swap {
 
     @PrimaryKey
     var id = ""
+    var initiator = false
 
     @TypeConverters(StateConverter::class)
     var state = State.REQUESTED
@@ -29,6 +30,10 @@ class Swap {
     var responderRefundPKId = ""
     var responderRefundTime = 0L
     var responderAmount = "0.0"
+
+    var initiatorBailTx: ByteArray = byteArrayOf()
+    var responderBailTx: ByteArray = byteArrayOf()
+    var initiatorRedeemTx: ByteArray = byteArrayOf()
 
     enum class State(val value: Int) {
         REQUESTED(1),
@@ -66,5 +71,8 @@ interface SwapDao {
 
     @Query("SELECT * FROM Swap WHERE id = :id")
     fun load(id: String) : Swap
+
+    @Query("SELECT * FROM Swap")
+    fun all() : List<Swap>
 
 }

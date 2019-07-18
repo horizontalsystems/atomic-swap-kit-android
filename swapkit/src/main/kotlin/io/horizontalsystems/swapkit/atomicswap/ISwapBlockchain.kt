@@ -7,6 +7,10 @@ interface ISwapBlockchain {
     fun setRedeemTxListener(listener: ISwapRedeemTxListener, bailTx: BailTx)
     fun getRedeemPublicKey(): PublicKey
     fun getRefundPublicKey(): PublicKey
+    fun serializeBailTx(bailTx: BailTx): ByteArray
+    fun deserializeBailTx(data: ByteArray): BailTx
+    fun serializeRedeemTx(redeemTx: RedeemTx): ByteArray
+    fun deserializeRedeemTx(data: ByteArray): RedeemTx
 }
 
 interface ISwapBailTxListener {
@@ -19,7 +23,7 @@ interface ISwapRedeemTxListener {
 
 open class BailTx
 open class RedeemTx {
-    var secret: ByteArray = byteArrayOf()
+    open var secret: ByteArray = byteArrayOf()
 }
 
 data class PublicKey(val publicKeyHash: ByteArray, val publicKeyId: String)
