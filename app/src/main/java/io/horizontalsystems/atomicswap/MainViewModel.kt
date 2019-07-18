@@ -2,14 +2,14 @@ package io.horizontalsystems.atomicswap
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import io.horizontalsystems.bitcoincash.BitcoinCashKit
 import io.horizontalsystems.bitcoincore.BitcoinCore
 import io.horizontalsystems.bitcoincore.models.BlockInfo
 import io.horizontalsystems.bitcoincore.models.FeePriority
 import io.horizontalsystems.bitcoincore.models.TransactionInfo
+import io.horizontalsystems.bitcoinkit.BitcoinKit
 import io.reactivex.disposables.CompositeDisposable
 
-class MainViewModel : ViewModel(), BitcoinCashKit.Listener {
+class MainViewModel : ViewModel(), BitcoinKit.Listener {
 
     enum class State {
         STARTED, STOPPED
@@ -30,10 +30,10 @@ class MainViewModel : ViewModel(), BitcoinCashKit.Listener {
             status.value = (if (value) State.STARTED else State.STOPPED)
         }
 
-    lateinit var bitcoinKit: BitcoinCashKit
+    lateinit var bitcoinKit: BitcoinKit
 
     private val walletId = "MyWallet"
-    private val networkType = BitcoinCashKit.NetworkType.TestNet
+    private val networkType = BitcoinKit.NetworkType.TestNet
 
     init {
         init()
@@ -43,7 +43,7 @@ class MainViewModel : ViewModel(), BitcoinCashKit.Listener {
 //        val words = "choice extend magnet about ribbon quote armed length stand color brave someone".split(" ") // initiator
         val words = "someone brave color stand length armed quote ribbon about magnet extend choice".split(" ") // responder
 
-        bitcoinKit = BitcoinCashKit(App.instance, words, walletId, networkType, confirmationsThreshold = 1, peerSize = 2, syncMode = BitcoinCore.SyncMode.NewWallet())
+        bitcoinKit = BitcoinKit(App.instance, words, walletId, networkType, confirmationsThreshold = 1, peerSize = 2, syncMode = BitcoinCore.SyncMode.NewWallet())
 
         bitcoinKit.listener = this
 
@@ -71,7 +71,7 @@ class MainViewModel : ViewModel(), BitcoinCashKit.Listener {
 
     fun clear() {
         bitcoinKit.stop()
-        BitcoinCashKit.clear(App.instance, networkType, walletId)
+        BitcoinKit.clear(App.instance, networkType, walletId)
 
         init()
     }
