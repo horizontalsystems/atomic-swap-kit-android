@@ -1,14 +1,15 @@
 package io.horizontalsystems.atomicswap
 
 import android.app.Application
+import com.facebook.stetho.Stetho
 
 class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
 
-//        // Enable debug bridge
-//        Stetho.initializeWithDefaults(this);
+        // Enable debug bridge
+        Stetho.initializeWithDefaults(this)
 //
 //        if (LeakCanary.isInAnalyzerProcess(this)) {
 //            // This process is dedicated to LeakCanary for heap analysis.

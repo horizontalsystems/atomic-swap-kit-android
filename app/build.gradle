@@ -37,6 +37,9 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
 
+    // For debug
+    implementation 'com.facebook.stetho:stetho:1.5.1'
+
     implementation 'com.github.horizontalsystems:bitcoin-kit-android:8f720ce'
 
     implementation 'io.reactivex.rxjava2:rxjava:2.2.8'
