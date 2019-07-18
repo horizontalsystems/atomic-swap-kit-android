@@ -82,7 +82,7 @@ class SwapFactory(private val db: SwapDatabase) {
             this.initiatorRedeemPKH = initiatorRedeemPKH
             this.initiatorRefundPKH = initiatorRefundPKH
 
-            this.secretHash = sha256(secret)
+            this.secretHash = secretHash
 
             responderRedeemPKH = redeemPublicKey.publicKeyHash
             responderRedeemPKId = redeemPublicKey.publicKeyId

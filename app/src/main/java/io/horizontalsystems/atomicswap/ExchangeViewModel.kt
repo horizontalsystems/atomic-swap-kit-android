@@ -23,6 +23,7 @@ class ExchangeViewModel : ViewModel() {
 
     fun init() {
         swapKit.registerSwapBlockchainCreator("BTC", BitcoinSwapBlockchainCreator(bitcoinKit))
+        swapKit.init()
         swapKit.processNext()
     }
 

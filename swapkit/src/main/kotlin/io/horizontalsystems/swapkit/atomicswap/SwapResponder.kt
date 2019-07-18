@@ -73,6 +73,8 @@ class SwapResponder(
     }
 
     private fun watchInitiatorRedeem() {
+        logger.info("Start watching for initiator redeem transaction")
+
         sendingBlockchain.setRedeemTxListener(this, sendingBlockchain.deserializeBailTx(swap.responderBailTx))
     }
 

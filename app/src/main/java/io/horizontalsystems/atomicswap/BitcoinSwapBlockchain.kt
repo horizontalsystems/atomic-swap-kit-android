@@ -62,11 +62,13 @@ class BitcoinSwapBlockchain(private val bitcoinKit: AbstractKit, private val scr
     }
 
     override fun sendRedeemTx(myRedeemPKH: ByteArray, myRedeemPKId: String, secret: ByteArray, secretHash: ByteArray, partnerRefundPKH: ByteArray, partnerRefundTime: Long, bailTx: BailTx): RedeemTx {
-        bailTx as BitcoinBailTx
+        check(bailTx is BitcoinBailTx)
 
         val publicKey = bitcoinKit.getPublicKeyByPath(myRedeemPKId)
 
-        val bailOutput = TransactionOutput(bailTx.amount, bailTx.outputIndex, bailTx.lockingScript, ScriptType.P2SH)
+        val bailOutput = TransactionOutput(bailTx.amount, bailTx.outputIndex, bailTx.lockingScript, ScriptType.P2SH).apply {
+            this.transactionHash = bailTx.txHash
+        }
 
         val redeemScript = scriptBuilder.bailScript(myRedeemPKH, secretHash, partnerRefundPKH, partnerRefundTime)
         bailOutput.redeemScript = redeemScript
@@ -79,11 +81,11 @@ class BitcoinSwapBlockchain(private val bitcoinKit: AbstractKit, private val scr
     }
 
     override fun setRedeemTxListener(listener: ISwapRedeemTxListener, bailTx: BailTx) {
-        bailTx as BitcoinBailTx
+        check(bailTx is BitcoinBailTx)
 
         bitcoinKit.watchTransaction(TransactionFilter.Outpoint(bailTx.txHash, bailTx.outputIndex.toLong()), object : WatchedTransactionManager.Listener {
             override fun onTransactionSeenOutpoint(tx: FullTransaction, inputIndex: Int) {
-                listener.onRedeemTransactionSeen(BitcoinRedeemTx(tx.header.hash, byteArrayOf()))
+                listener.onRedeemTransactionSeen(BitcoinRedeemTx(tx.header.hash, scriptBuilder.parseSecret(tx.inputs[inputIndex].sigScript)))
             }
         })
     }
@@ -123,10 +125,9 @@ class BitcoinSwapBlockchain(private val bitcoinKit: AbstractKit, private val scr
     }
 
     override fun deserializeRedeemTx(data: ByteArray): RedeemTx {
-        return BitcoinInput(data).use {input ->
+        return BitcoinInput(data).use { input ->
             BitcoinRedeemTx(input.readBytes(32), input.readBytes(32))
         }
-
     }
 }
 
@@ -188,5 +189,53 @@ class SwapScriptBuilder {
 
     fun opCodeByte(v: Int): Byte {
         return v.toByte()
+    }
+
+    fun parseSecret(sigScript: ByteArray): ByteArray {
+        val scriptData = deserialize(sigScript)
+        return scriptData[2]
+    }
+
+    fun deserialize(script: ByteArray): MutableList<ByteArray> {
+        val data = mutableListOf<ByteArray>()
+
+        BitcoinInput(script).use { input ->
+            while (true) {
+                val dataSize = input.read()
+
+                if (dataSize == -1) break
+                when (dataSize) {
+                    0x00 -> {
+                        data.add(byteArrayOf())
+                    }
+                    in 0x01..0x4b -> {
+                        data.add(input.readBytes(dataSize))
+                    }
+                    0x4c -> {
+                        val dataSize2 = input.readUnsignedByte()
+                        data.add(input.readBytes(dataSize2))
+                    }
+                    0x4d -> {
+                        val dataSize2 = input.readUnsignedShort()
+                        data.add(input.readBytes(dataSize2))
+                    }
+                    0x4e -> {
+                        val dataSize2 = input.readUnsignedInt()
+                        data.add(input.readBytes(dataSize2.toInt()))
+                    }
+                    0x4f -> {
+                        data.add(byteArrayOf((-1).toByte()))
+                    }
+                    0x51 -> {
+                        data.add(byteArrayOf(0x51.toByte()))
+                    }
+                    in 0x52..0x60 -> {
+                        data.add(byteArrayOf((dataSize - 0x50).toByte()))
+                    }
+                }
+            }
+        }
+
+        return data
     }
 }

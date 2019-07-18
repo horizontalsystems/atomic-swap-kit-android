@@ -11,7 +11,7 @@ class SwapKit(context: Context) {
     private val swapInitiators = mutableMapOf<String, SwapInitiator>()
     private val swapResponders = mutableMapOf<String, SwapResponder>()
 
-    init {
+    fun init() {
         val swaps = db.swapDao.all()
 
         swaps.forEach {

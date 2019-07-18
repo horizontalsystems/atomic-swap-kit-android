@@ -6,8 +6,8 @@ class SwapRequest(
     val responderCoinCode: String,
     val rate: Double,
     val initiatorAmount: String,
-    val initiatorRefundPKH: ByteArray,
     val initiatorRedeemPKH: ByteArray,
+    val initiatorRefundPKH: ByteArray,
     val secretHash: ByteArray
 ) {
 
@@ -17,8 +17,8 @@ class SwapRequest(
         swap.responderCoinCode,
         swap.rate,
         swap.initiatorAmount,
-        swap.initiatorRefundPKH,
         swap.initiatorRedeemPKH,
+        swap.initiatorRefundPKH,
         swap.secretHash
     )
 
