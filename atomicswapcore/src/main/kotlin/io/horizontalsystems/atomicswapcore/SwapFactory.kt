@@ -3,6 +3,8 @@ package io.horizontalsystems.atomicswapcore
 import java.security.MessageDigest
 import java.util.*
 
+
+
 class SwapFactory(private val db: SwapDatabase) {
     val supportedCoins get() = swapBlockchainCreators.keys
 
@@ -38,7 +40,7 @@ class SwapFactory(private val db: SwapDatabase) {
         val initiatorRefundPublicKey = initiatorBlockchain.getRefundPublicKey()
 
         val id = UUID.randomUUID().toString()
-        val secret = sha256("supersecret".toByteArray())
+        val secret = sha256(UUID.randomUUID().toString().toByteArray())
 
         val swap = Swap().apply {
             this.id = id
@@ -71,6 +73,14 @@ class SwapFactory(private val db: SwapDatabase) {
         val redeemPublicKey = initiatorBlockchain.getRedeemPublicKey()
         val refundPublicKey = responderBlockchain.getRefundPublicKey()
 
+        val calendar = Calendar.getInstance()
+
+        calendar.add(Calendar.DAY_OF_YEAR, 1)
+        val tomorrow = calendar.timeInMillis / 1000
+
+        calendar.add(Calendar.DAY_OF_YEAR, 1)
+        val dayAfterTomorrow = calendar.timeInMillis / 1000
+
         val swap = Swap().apply {
             this.id = id
             this.initiator = false
@@ -91,8 +101,8 @@ class SwapFactory(private val db: SwapDatabase) {
             responderRefundPKH = refundPublicKey.publicKeyHash
             responderRefundPKId = refundPublicKey.publicKeyId
 
-            responderRefundTime = 1563000000 // 07/13/2019 @ 6:40am (UTC)
-            initiatorRefundTime = 1563100000 // 07/14/2019 @ 10:26am (UTC)
+            responderRefundTime = tomorrow
+            initiatorRefundTime = dayAfterTomorrow
         }
 
         db.swapDao.save(swap)
