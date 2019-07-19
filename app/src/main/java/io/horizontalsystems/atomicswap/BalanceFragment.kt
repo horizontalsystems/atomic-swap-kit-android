@@ -4,26 +4,17 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import io.horizontalsystems.bitcoincore.BitcoinCore
+import kotlinx.android.synthetic.main.fragment_balance.*
 import java.text.SimpleDateFormat
 import java.util.*
 
 class BalanceFragment : Fragment() {
 
     lateinit var viewModel: MainViewModel
-    lateinit var networkName: TextView
-    lateinit var balanceValue: TextView
-    lateinit var lastBlockDateValue: TextView
-    lateinit var lastBlockValue: TextView
-    lateinit var stateValue: TextView
-    lateinit var startButton: Button
-    lateinit var clearButton: Button
-    lateinit var buttonDebug: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,7 +22,7 @@ class BalanceFragment : Fragment() {
         activity?.let {
             viewModel = ViewModelProviders.of(it).get(MainViewModel::class.java)
 
-            viewModel.balance.observe(this, Observer { balance ->
+            viewModel.balanceBtc.observe(this, Observer { balance ->
                 balanceValue.text = when (balance) {
                     null -> ""
                     else -> NumberFormatHelper.cryptoAmountFormat.format(balance / 100_000_000.0)
@@ -39,7 +30,7 @@ class BalanceFragment : Fragment() {
             })
 
             val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US)
-            viewModel.lastBlock.observe(this, Observer {
+            viewModel.lastBlockBtc.observe(this, Observer {
                 it?.let { blockInfo ->
                     lastBlockValue.text = blockInfo.height.toString()
 
@@ -48,7 +39,7 @@ class BalanceFragment : Fragment() {
                 }
             })
 
-            viewModel.state.observe(this, Observer { state ->
+            viewModel.stateBtc.observe(this, Observer { state ->
                 when (state) {
                     is BitcoinCore.KitState.Synced -> {
                         stateValue.text = "synced"
@@ -63,14 +54,7 @@ class BalanceFragment : Fragment() {
             })
 
             viewModel.status.observe(this, Observer {
-                when (it) {
-                    MainViewModel.State.STARTED -> {
-                        startButton.isEnabled = false
-                    }
-                    else -> {
-                        startButton.isEnabled = true
-                    }
-                }
+                buttonStart.isEnabled = it != MainViewModel.State.STARTED
             })
 
         }
@@ -83,22 +67,13 @@ class BalanceFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        networkName = view.findViewById(R.id.networkName)
-        networkName.text = viewModel.networkName
+        networkName.text = viewModel.networkNameBtc
 
-        balanceValue = view.findViewById(R.id.balanceValue)
-        lastBlockValue = view.findViewById(R.id.lastBlockValue)
-        lastBlockDateValue = view.findViewById(R.id.lastBlockDateValue)
-        stateValue = view.findViewById(R.id.stateValue)
-        startButton = view.findViewById(R.id.buttonStart)
-        clearButton = view.findViewById(R.id.buttonClear)
-        buttonDebug = view.findViewById(R.id.buttonDebug)
-
-        startButton.setOnClickListener {
+        buttonStart.setOnClickListener {
             viewModel.start()
         }
 
-        clearButton.setOnClickListener {
+        buttonClear.setOnClickListener {
             viewModel.clear()
         }
 

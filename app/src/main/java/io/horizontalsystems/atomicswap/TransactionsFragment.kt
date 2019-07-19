@@ -30,7 +30,7 @@ class TransactionsFragment : Fragment() {
         activity?.let {
             viewModel = ViewModelProviders.of(it).get(MainViewModel::class.java)
 
-            viewModel.transactions.observe(this, Observer {
+            viewModel.transactionsBtc.observe(this, Observer {
                 it?.let { transactions ->
                     transactionsAdapter.items = transactions
                     transactionsAdapter.notifyDataSetChanged()

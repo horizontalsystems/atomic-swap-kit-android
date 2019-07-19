@@ -44,6 +44,13 @@ class ExchangeFragment : Fragment() {
                     else -> {}
                 }
             })
+            exchangeViewModel.supportedCoins.observe(this, Observer {
+                val coins = ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, it.toTypedArray())
+
+                fieldHave.adapter = coins
+                fieldWant.adapter = coins
+
+            })
         }
     }
 
@@ -53,11 +60,6 @@ class ExchangeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        val coins = ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, arrayOf("BTC", "BCH"))
-
-        fieldHave.adapter = coins
-        fieldWant.adapter = coins
 
         buttonRequest.setOnClickListener {
             val coinHave = fieldHave.selectedItem.toString()
