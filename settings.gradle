@@ -1,1 +1,1 @@
-include ':app', ':swapkit'
+include ':app', ':swapkit', ':atomicswapbitcoin'
