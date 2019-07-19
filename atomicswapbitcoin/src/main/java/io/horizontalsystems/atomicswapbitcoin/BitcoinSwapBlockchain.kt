@@ -28,9 +28,9 @@ class BitcoinSwapBlockchain(private val bitcoinKit: AbstractKit, private val scr
         return PublicKey(changePublicKey.publicKeyHash, changePublicKey.path)
     }
 
-    override fun sendBailTx(partnerRedeemPKH: ByteArray, secretHash: ByteArray, myRefundPKH: ByteArray, myRefundTime: Long, amount: String): BitcoinBailTx {
+    override fun sendBailTx(redeemPKH: ByteArray, secretHash: ByteArray, refundPKH: ByteArray, refundTime: Long, amount: String): BitcoinBailTx {
         val feeRate = 42
-        val scriptHash = scriptBuilder.bailTxScriptHash(partnerRedeemPKH, secretHash, myRefundPKH, myRefundTime)
+        val scriptHash = scriptBuilder.bailTxScriptHash(redeemPKH, secretHash, refundPKH, refundTime)
         val amountNumeric = amount.toDouble().times(100_000_000).toLong()
 
         val fullTransaction = bitcoinKit.send(scriptHash, ScriptType.P2SH, amountNumeric, true, feeRate)
@@ -41,8 +41,8 @@ class BitcoinSwapBlockchain(private val bitcoinKit: AbstractKit, private val scr
         return BitcoinBailTx(fullTransaction.header.hash, output.index, output.lockingScript, amountNumeric, scriptHash)
     }
 
-    override fun setBailTxListener(listener: ISwapBailTxListener, myRedeemPKH: ByteArray, secretHash: ByteArray, partnerRefundPKH: ByteArray, partnerRefundTime: Long) {
-        val scriptHash = scriptBuilder.bailTxScriptHash(myRedeemPKH, secretHash, partnerRefundPKH, partnerRefundTime)
+    override fun setBailTxListener(listener: ISwapBailTxListener, redeemPKH: ByteArray, secretHash: ByteArray, refundPKH: ByteArray, refundTime: Long) {
+        val scriptHash = scriptBuilder.bailTxScriptHash(redeemPKH, secretHash, refundPKH, refundTime)
 
         bitcoinKit.watchTransaction(TransactionFilter.P2SHOutput(scriptHash), object : WatchedTransactionManager.Listener {
             override fun onTransactionSeenP2SH(tx: FullTransaction, outputIndex: Int) {
@@ -52,16 +52,16 @@ class BitcoinSwapBlockchain(private val bitcoinKit: AbstractKit, private val scr
         })
     }
 
-    override fun sendRedeemTx(myRedeemPKH: ByteArray, myRedeemPKId: String, secret: ByteArray, secretHash: ByteArray, partnerRefundPKH: ByteArray, partnerRefundTime: Long, bailTx: BailTx): RedeemTx {
+    override fun sendRedeemTx(redeemPKH: ByteArray, redeemPKId: String, secret: ByteArray, secretHash: ByteArray, refundPKH: ByteArray, refundTime: Long, bailTx: BailTx): RedeemTx {
         check(bailTx is BitcoinBailTx)
 
-        val publicKey = bitcoinKit.getPublicKeyByPath(myRedeemPKId)
+        val publicKey = bitcoinKit.getPublicKeyByPath(redeemPKId)
 
         val bailOutput = TransactionOutput(bailTx.amount, bailTx.outputIndex, bailTx.lockingScript, ScriptType.P2SH).apply {
             this.transactionHash = bailTx.txHash
         }
 
-        val redeemScript = scriptBuilder.bailScript(myRedeemPKH, secretHash, partnerRefundPKH, partnerRefundTime)
+        val redeemScript = scriptBuilder.bailScript(redeemPKH, secretHash, refundPKH, refundTime)
         bailOutput.redeemScript = redeemScript
 
         val fullTransaction = bitcoinKit.redeem(UnspentOutput(bailOutput, publicKey, Transaction(), null), bitcoinKit.receiveAddress(), 42) { signature, publicKeyHash ->
