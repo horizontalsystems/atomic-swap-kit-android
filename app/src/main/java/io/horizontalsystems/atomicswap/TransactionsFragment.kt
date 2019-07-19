@@ -30,7 +30,13 @@ class TransactionsFragment : Fragment() {
         activity?.let {
             viewModel = ViewModelProviders.of(it).get(MainViewModel::class.java)
 
-            viewModel.transactionsBtc.observe(this, Observer {
+            val transactionsLiveData = when (arguments?.getString("coin")) {
+                "BTC" -> viewModel.transactionsBtc
+                "BCH" -> viewModel.transactionsBch
+                else -> null
+            }
+
+            transactionsLiveData?.observe(this, Observer {
                 it?.let { transactions ->
                     transactionsAdapter.items = transactions
                     transactionsAdapter.notifyDataSetChanged()

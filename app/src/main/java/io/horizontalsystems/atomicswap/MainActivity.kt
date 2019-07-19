@@ -24,7 +24,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         val fragment: Fragment? = when (item.itemId) {
             R.id.navigation_exchange -> ExchangeFragment()
             R.id.navigation_home -> BalanceFragment()
-            R.id.navigation_transactions -> TransactionsFragment()
+            R.id.navigation_transactions -> TransactionTabsFragment()
             else -> null
         }
 
