@@ -6,12 +6,22 @@
     android:layout_height="wrap_content"
     android:padding="8dp">
 
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="right"
+        app:constraint_referenced_ids="lastBlockTitle,stateTitle,lastBlockDateTitle,receiveAddressTitle,networkTitle,balanceTitle"
+        tools:layout_editor_absoluteX="96dp"
+        tools:layout_editor_absoluteY="8dp" />
+
     <TextView
         android:id="@+id/networkTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:text="Network:"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -19,10 +29,10 @@
         android:id="@+id/networkName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="8dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        app:layout_constraintStart_toEndOf="@+id/networkTitle"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBaseline_toBaselineOf="@+id/networkTitle"
+        app:layout_constraintStart_toEndOf="@+id/barrier"
         tools:text="Testnet" />
 
     <TextView
@@ -31,18 +41,18 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="Balance:"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/networkTitle" />
+        app:layout_constraintTop_toBottomOf="@+id/networkName" />
 
     <TextView
         android:id="@+id/balanceValue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="8dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        app:layout_constraintStart_toEndOf="@+id/balanceTitle"
-        app:layout_constraintTop_toTopOf="@+id/balanceTitle"
+        app:layout_constraintBaseline_toBaselineOf="@+id/balanceTitle"
+        app:layout_constraintStart_toEndOf="@+id/barrier"
         tools:text="100.0" />
 
     <TextView
@@ -51,18 +61,18 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="State:"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/balanceTitle" />
+        app:layout_constraintTop_toBottomOf="@+id/balanceValue" />
 
     <TextView
         android:id="@+id/stateValue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="8dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        app:layout_constraintStart_toEndOf="@+id/stateTitle"
-        app:layout_constraintTop_toTopOf="@+id/stateTitle"
+        app:layout_constraintBaseline_toBaselineOf="@+id/stateTitle"
+        app:layout_constraintStart_toEndOf="@+id/barrier"
         tools:text="syncing" />
 
     <TextView
@@ -71,18 +81,18 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="Last Block:"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/stateTitle" />
+        app:layout_constraintTop_toBottomOf="@+id/stateValue" />
 
     <TextView
         android:id="@+id/lastBlockValue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="8dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        app:layout_constraintStart_toEndOf="@+id/lastBlockTitle"
-        app:layout_constraintTop_toTopOf="@+id/lastBlockTitle"
+        app:layout_constraintBaseline_toBaselineOf="@+id/lastBlockTitle"
+        app:layout_constraintStart_toEndOf="@+id/barrier"
         tools:text="123000" />
 
     <TextView
@@ -91,18 +101,18 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="Until:"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/lastBlockTitle" />
+        app:layout_constraintTop_toBottomOf="@+id/lastBlockValue" />
 
     <TextView
         android:id="@+id/lastBlockDateValue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="8dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        app:layout_constraintStart_toEndOf="@+id/lastBlockDateTitle"
-        app:layout_constraintTop_toTopOf="@+id/lastBlockDateTitle"
+        app:layout_constraintBaseline_toBaselineOf="@+id/lastBlockDateTitle"
+        app:layout_constraintStart_toEndOf="@+id/barrier"
         tools:text="2019-01-01 12:12:12" />
 
     <TextView
@@ -111,19 +121,19 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="Address: "
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/lastBlockDateTitle" />
+        app:layout_constraintTop_toBottomOf="@+id/lastBlockDateValue" />
 
     <TextView
         android:id="@+id/receiveAddressValue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="8dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:textIsSelectable="true"
-        app:layout_constraintStart_toEndOf="@+id/receiveAddressTitle"
-        app:layout_constraintTop_toTopOf="@+id/receiveAddressTitle"
+        app:layout_constraintBaseline_toBaselineOf="@+id/receiveAddressTitle"
+        app:layout_constraintStart_toEndOf="@+id/barrier"
         tools:text="MvHz1P0AKl12312aEkjKmokaj" />
 
 
