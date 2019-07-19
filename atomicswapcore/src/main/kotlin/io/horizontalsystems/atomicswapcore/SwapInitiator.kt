@@ -12,6 +12,8 @@ class SwapInitiator(
     private val logger = Logger.getLogger("AS-Initiator")
 
     fun processNext() {
+        logger.info("Proceed initiator ${swap.id} with state ${swap.state}")
+
         when (swap.state) {
             Swap.State.REQUESTED -> {
             }
@@ -38,18 +40,22 @@ class SwapInitiator(
     }
 
     private fun sendInitiatorBailTx() {
-        val bailTx = sendingBlockchain.sendBailTx(
-            swap.responderRedeemPKH,
-            swap.secretHash,
-            swap.initiatorRefundPKH,
-            swap.initiatorRefundTime,
-            swap.initiatorAmount
-        )
+        try {
+            val bailTx = sendingBlockchain.sendBailTx(
+                swap.responderRedeemPKH,
+                swap.secretHash,
+                swap.initiatorRefundPKH,
+                swap.initiatorRefundTime,
+                swap.initiatorAmount
+            )
 
-        swap.state = Swap.State.INITIATOR_BAILED
-        db.swapDao.save(swap)
+            swap.state = Swap.State.INITIATOR_BAILED
+            db.swapDao.save(swap)
 
-        logger.info("Sent initiator bail tx $bailTx")
+            logger.info("Sent initiator bail tx $bailTx")
+        } catch (e: Exception) {
+
+        }
     }
 
     private fun watchResponderBail() {
@@ -77,22 +83,26 @@ class SwapInitiator(
     }
 
     private fun redeem() {
-        val responderBailTx = receivingBlockchain.deserializeBailTx(swap.responderBailTx)
+        try {
+            val responderBailTx = receivingBlockchain.deserializeBailTx(swap.responderBailTx)
 
-        val redeemTx = receivingBlockchain.sendRedeemTx(
-            swap.initiatorRedeemPKH,
-            swap.initiatorRedeemPKId,
-            swap.secret,
-            swap.secretHash,
-            swap.responderRefundPKH,
-            swap.responderRefundTime,
-            responderBailTx
-        )
+            val redeemTx = receivingBlockchain.sendRedeemTx(
+                swap.initiatorRedeemPKH,
+                swap.initiatorRedeemPKId,
+                swap.secret,
+                swap.secretHash,
+                swap.responderRefundPKH,
+                swap.responderRefundTime,
+                responderBailTx
+            )
 
-        swap.state = Swap.State.INITIATOR_REDEEMED
-        db.swapDao.save(swap)
+            swap.state = Swap.State.INITIATOR_REDEEMED
+            db.swapDao.save(swap)
 
-        logger.info("Sent initiator redeem tx $redeemTx")
+            logger.info("Sent initiator redeem tx $redeemTx")
+        } catch (e: Exception) {
+
+        }
     }
 
 }
