@@ -63,6 +63,7 @@ class ViewHolderAccount(private val containerView: View) : RecyclerView.ViewHold
 
     fun bind(account: MainViewModel.Account) {
         containerView.networkName.text = account.networkName
+        containerView.receiveAddressValue.text = account.receiveAddress
         containerView.balanceValue
 
         containerView.balanceValue.text = NumberFormatHelper.cryptoAmountFormat.format(account.balance / 100_000_000.0)

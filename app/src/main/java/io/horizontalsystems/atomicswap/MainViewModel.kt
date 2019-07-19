@@ -23,7 +23,8 @@ class MainViewModel : ViewModel(), BitcoinKit.Listener {
             var networkName: String,
             var balance: Long,
             var lastBlockInfo: BlockInfo?,
-            var state: BitcoinCore.KitState
+            var state: BitcoinCore.KitState,
+            var receiveAddress: String
     )
 
 
@@ -65,8 +66,8 @@ class MainViewModel : ViewModel(), BitcoinKit.Listener {
         bitcoinKit = BitcoinKit(App.instance, words, walletId, networkTypeBtc, confirmationsThreshold = 1, peerSize = 2, syncMode = BitcoinCore.SyncMode.NewWallet())
         bitcoinCashKit = BitcoinCashKit(App.instance, words, walletId, networkTypeBch, confirmationsThreshold = 1, peerSize = 2, syncMode = BitcoinCore.SyncMode.NewWallet())
 
-        accounts["BTC"] = Account(bitcoinKit.networkName, bitcoinKit.balance, bitcoinKit.lastBlockInfo, BitcoinCore.KitState.NotSynced)
-        accounts["BCH"] = Account(bitcoinCashKit.networkName, bitcoinCashKit.balance, bitcoinCashKit.lastBlockInfo, BitcoinCore.KitState.NotSynced)
+        accounts["BTC"] = Account(bitcoinKit.networkName, bitcoinKit.balance, bitcoinKit.lastBlockInfo, BitcoinCore.KitState.NotSynced, bitcoinKit.receiveAddress())
+        accounts["BCH"] = Account(bitcoinCashKit.networkName, bitcoinCashKit.balance, bitcoinCashKit.lastBlockInfo, BitcoinCore.KitState.NotSynced, bitcoinCashKit.receiveAddress())
         accountsLiveData.postValue(accounts.values)
 
         retrieveBtcTransactions()
@@ -99,6 +100,7 @@ class MainViewModel : ViewModel(), BitcoinKit.Listener {
             override fun onKitStateUpdate(state: BitcoinCore.KitState) {
                 accounts["BTC"]?.state = state
                 accountsLiveData.postValue(accounts.values)
+                processSwapsIfAllSynced()
             }
         }
 
@@ -111,6 +113,7 @@ class MainViewModel : ViewModel(), BitcoinKit.Listener {
             override fun onKitStateUpdate(state: BitcoinCore.KitState) {
                 accounts["BCH"]?.state = state
                 accountsLiveData.postValue(accounts.values)
+                processSwapsIfAllSynced()
             }
 
             override fun onLastBlockInfoUpdate(blockInfo: BlockInfo) {
@@ -121,6 +124,12 @@ class MainViewModel : ViewModel(), BitcoinKit.Listener {
             override fun onTransactionsUpdate(inserted: List<TransactionInfo>, updated: List<TransactionInfo>) {
                 retrieveBchTransactions()
             }
+        }
+    }
+
+    private fun processSwapsIfAllSynced() {
+        if (accounts.all { it.value.state == BitcoinCore.KitState.Synced }) {
+            swapKit.processNext()
         }
     }
 
