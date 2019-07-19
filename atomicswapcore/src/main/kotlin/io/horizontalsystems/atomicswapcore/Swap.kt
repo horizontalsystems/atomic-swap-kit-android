@@ -1,4 +1,4 @@
-package io.horizontalsystems.swapkit.atomicswap
+package io.horizontalsystems.atomicswapcore
 
 import androidx.room.*
 

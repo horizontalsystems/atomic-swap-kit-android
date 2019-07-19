@@ -1,7 +1,6 @@
-package io.horizontalsystems.swapkit
+package io.horizontalsystems.atomicswapcore
 
 import android.content.Context
-import io.horizontalsystems.swapkit.atomicswap.*
 
 class SwapKit(context: Context) {
 

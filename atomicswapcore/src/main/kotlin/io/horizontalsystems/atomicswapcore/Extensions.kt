@@ -1,4 +1,4 @@
-package io.horizontalsystems.swapkit.atomicswap
+package io.horizontalsystems.atomicswapcore
 
 fun ByteArray.toHexString(): String {
     return this.joinToString(separator = "") {

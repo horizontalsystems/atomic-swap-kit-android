@@ -4,17 +4,17 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import io.horizontalsystems.atomicswapbitcoin.BitcoinSwapBlockchainCreator
+import io.horizontalsystems.atomicswapcore.SwapKit
+import io.horizontalsystems.atomicswapcore.SwapRequest
+import io.horizontalsystems.atomicswapcore.SwapResponse
+import io.horizontalsystems.atomicswapcore.hexToByteArray
+import io.horizontalsystems.atomicswapcore.toHexString
 import io.horizontalsystems.bitcoincash.BitcoinCashKit
 import io.horizontalsystems.bitcoincore.BitcoinCore
 import io.horizontalsystems.bitcoincore.models.BlockInfo
 import io.horizontalsystems.bitcoincore.models.FeePriority
 import io.horizontalsystems.bitcoincore.models.TransactionInfo
 import io.horizontalsystems.bitcoinkit.BitcoinKit
-import io.horizontalsystems.swapkit.SwapKit
-import io.horizontalsystems.swapkit.atomicswap.SwapRequest
-import io.horizontalsystems.swapkit.atomicswap.SwapResponse
-import io.horizontalsystems.swapkit.atomicswap.hexToByteArray
-import io.horizontalsystems.swapkit.atomicswap.toHexString
 import io.reactivex.disposables.CompositeDisposable
 
 class MainViewModel : ViewModel(), BitcoinKit.Listener {

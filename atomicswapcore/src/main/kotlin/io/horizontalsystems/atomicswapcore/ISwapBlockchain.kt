@@ -1,4 +1,4 @@
-package io.horizontalsystems.swapkit.atomicswap
+package io.horizontalsystems.atomicswapcore
 
 interface ISwapBlockchain {
     fun sendBailTx(partnerRedeemPKH: ByteArray, secretHash: ByteArray, myRefundPKH: ByteArray, myRefundTime: Long, amount: String) : BailTx

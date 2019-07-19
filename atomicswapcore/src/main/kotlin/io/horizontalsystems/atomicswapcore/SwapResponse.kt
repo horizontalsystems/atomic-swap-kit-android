@@ -1,4 +1,4 @@
-package io.horizontalsystems.swapkit.atomicswap
+package io.horizontalsystems.atomicswapcore
 
 class SwapResponse(
     val id: String,

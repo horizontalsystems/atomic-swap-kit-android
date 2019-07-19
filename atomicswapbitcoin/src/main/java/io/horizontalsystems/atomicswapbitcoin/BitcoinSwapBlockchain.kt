@@ -1,5 +1,6 @@
 package io.horizontalsystems.atomicswapbitcoin
 
+import io.horizontalsystems.atomicswapcore.*
 import io.horizontalsystems.bitcoincore.AbstractKit
 import io.horizontalsystems.bitcoincore.TransactionFilter
 import io.horizontalsystems.bitcoincore.WatchedTransactionManager
@@ -12,7 +13,6 @@ import io.horizontalsystems.bitcoincore.storage.UnspentOutput
 import io.horizontalsystems.bitcoincore.transactions.scripts.OP_1
 import io.horizontalsystems.bitcoincore.transactions.scripts.OpCodes
 import io.horizontalsystems.bitcoincore.transactions.scripts.ScriptType
-import io.horizontalsystems.swapkit.atomicswap.*
 
 class BitcoinSwapBlockchain(private val bitcoinKit: AbstractKit, private val scriptBuilder: SwapScriptBuilder) : ISwapBlockchain {
 

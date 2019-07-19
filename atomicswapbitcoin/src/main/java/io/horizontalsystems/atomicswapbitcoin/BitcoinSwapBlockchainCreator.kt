@@ -1,8 +1,8 @@
 package io.horizontalsystems.atomicswapbitcoin
 
+import io.horizontalsystems.atomicswapcore.ISwapBlockchain
+import io.horizontalsystems.atomicswapcore.ISwapBlockchainCreator
 import io.horizontalsystems.bitcoincore.AbstractKit
-import io.horizontalsystems.swapkit.atomicswap.ISwapBlockchain
-import io.horizontalsystems.swapkit.atomicswap.ISwapBlockchainCreator
 
 class BitcoinSwapBlockchainCreator(private val bitcoinKit: AbstractKit) : ISwapBlockchainCreator {
     private val scriptBuilder = SwapScriptBuilder()
