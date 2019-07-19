@@ -4,11 +4,7 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import io.horizontalsystems.atomicswapbitcoin.BitcoinSwapBlockchainCreator
-import io.horizontalsystems.atomicswapcore.SwapKit
-import io.horizontalsystems.atomicswapcore.SwapRequest
-import io.horizontalsystems.atomicswapcore.SwapResponse
-import io.horizontalsystems.atomicswapcore.hexToByteArray
-import io.horizontalsystems.atomicswapcore.toHexString
+import io.horizontalsystems.atomicswapcore.*
 import io.horizontalsystems.bitcoincash.BitcoinCashKit
 import io.horizontalsystems.bitcoincore.BitcoinCore
 import io.horizontalsystems.bitcoincore.models.BlockInfo
@@ -23,18 +19,20 @@ class MainViewModel : ViewModel(), BitcoinKit.Listener {
         STARTED, STOPPED
     }
 
+    class Account(
+            var networkName: String,
+            var balance: Long,
+            var lastBlockInfo: BlockInfo?,
+            var state: BitcoinCore.KitState
+    )
+
+
     val supportedCoins = MutableLiveData<Collection<String>>()
+    val accounts = mutableMapOf<String, Account>()
+    val accountsLiveData = MutableLiveData<Collection<Account>>()
     val transactionsBtc = MutableLiveData<List<TransactionInfo>>()
     val transactionsBch = MutableLiveData<List<TransactionInfo>>()
-    val balanceBtc = MutableLiveData<Long>()
-    val balanceBch = MutableLiveData<Long>()
-    val lastBlockBtc = MutableLiveData<BlockInfo>()
-    val lastBlockBch = MutableLiveData<BlockInfo>()
-    val stateBtc = MutableLiveData<BitcoinCore.KitState>()
-    val stateBch = MutableLiveData<BitcoinCore.KitState>()
     val status = MutableLiveData<State>()
-    lateinit var networkNameBtc: String
-    lateinit var networkNameBch: String
     var feePriorityBtc: FeePriority = FeePriority.Medium
     private val disposables = CompositeDisposable()
 
@@ -67,18 +65,12 @@ class MainViewModel : ViewModel(), BitcoinKit.Listener {
         bitcoinKit = BitcoinKit(App.instance, words, walletId, networkTypeBtc, confirmationsThreshold = 1, peerSize = 2, syncMode = BitcoinCore.SyncMode.NewWallet())
         bitcoinCashKit = BitcoinCashKit(App.instance, words, walletId, networkTypeBch, confirmationsThreshold = 1, peerSize = 2, syncMode = BitcoinCore.SyncMode.NewWallet())
 
-        networkNameBtc = bitcoinKit.networkName
-        networkNameBch = bitcoinCashKit.networkName
-        balanceBtc.value = bitcoinKit.balance
-        balanceBch.value = bitcoinCashKit.balance
+        accounts["BTC"] = Account(bitcoinKit.networkName, bitcoinKit.balance, bitcoinKit.lastBlockInfo, BitcoinCore.KitState.NotSynced)
+        accounts["BCH"] = Account(bitcoinCashKit.networkName, bitcoinCashKit.balance, bitcoinCashKit.lastBlockInfo, BitcoinCore.KitState.NotSynced)
+        accountsLiveData.postValue(accounts.values)
 
         retrieveBtcTransactions()
         retrieveBchTransactions()
-
-        lastBlockBtc.value = bitcoinKit.lastBlockInfo
-        lastBlockBch.value = bitcoinCashKit.lastBlockInfo
-        stateBtc.value = BitcoinCore.KitState.NotSynced
-        stateBch.value = BitcoinCore.KitState.NotSynced
 
         started = false
 
@@ -95,29 +87,35 @@ class MainViewModel : ViewModel(), BitcoinKit.Listener {
             }
 
             override fun onBalanceUpdate(balance: Long) {
-                balanceBtc.postValue(balance)
+                accounts["BTC"]?.balance = balance
+                accountsLiveData.postValue(accounts.values)
             }
 
             override fun onLastBlockInfoUpdate(blockInfo: BlockInfo) {
-                lastBlockBtc.postValue(blockInfo)
+                accounts["BTC"]?.lastBlockInfo = blockInfo
+                accountsLiveData.postValue(accounts.values)
             }
 
             override fun onKitStateUpdate(state: BitcoinCore.KitState) {
-                stateBtc.postValue(state)
+                accounts["BTC"]?.state = state
+                accountsLiveData.postValue(accounts.values)
             }
         }
 
         bitcoinCashKit.listener = object : BitcoinCashKit.Listener {
             override fun onBalanceUpdate(balance: Long) {
-                balanceBch.postValue(balance)
+                accounts["BCH"]?.balance = balance
+                accountsLiveData.postValue(accounts.values)
             }
 
             override fun onKitStateUpdate(state: BitcoinCore.KitState) {
-                stateBch.postValue(state)
+                accounts["BCH"]?.state = state
+                accountsLiveData.postValue(accounts.values)
             }
 
             override fun onLastBlockInfoUpdate(blockInfo: BlockInfo) {
-                lastBlockBch.postValue(blockInfo)
+                accounts["BCH"]?.lastBlockInfo = blockInfo
+                accountsLiveData.postValue(accounts.values)
             }
 
             override fun onTransactionsUpdate(inserted: List<TransactionInfo>, updated: List<TransactionInfo>) {
@@ -128,7 +126,7 @@ class MainViewModel : ViewModel(), BitcoinKit.Listener {
 
     private fun retrieveBtcTransactions() {
         bitcoinKit.transactions().subscribe { txList: List<TransactionInfo> ->
-            transactionsBtc.value = txList
+            transactionsBtc.postValue(txList)
         }.let {
             disposables.add(it)
         }
@@ -136,7 +134,7 @@ class MainViewModel : ViewModel(), BitcoinKit.Listener {
 
     private fun retrieveBchTransactions() {
         bitcoinCashKit.transactions().subscribe { txList: List<TransactionInfo> ->
-            transactionsBch.value = txList
+            transactionsBch.postValue(txList)
         }.let {
             disposables.add(it)
         }

@@ -3,8 +3,6 @@ package io.horizontalsystems.atomicswapcore
 import java.security.MessageDigest
 import java.util.*
 
-
-
 class SwapFactory(private val db: SwapDatabase) {
     val supportedCoins get() = swapBlockchainCreators.keys
 
