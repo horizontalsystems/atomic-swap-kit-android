@@ -4,6 +4,8 @@ import java.security.MessageDigest
 import java.util.*
 
 class SwapFactory(private val db: SwapDatabase) {
+    val supportedCoins get() = swapBlockchainCreators.keys
+
     private val swapBlockchainCreators = mutableMapOf<String, ISwapBlockchainCreator>()
 
     fun registerSwapBlockchainCreator(coinCode: String, creator: ISwapBlockchainCreator) {
@@ -98,7 +100,7 @@ class SwapFactory(private val db: SwapDatabase) {
         return swap
     }
 
-    fun retrieveSwapForResponse(id: String, responderRedeemPKH: ByteArray, responderRefundPKH: ByteArray, responderRefundTime: Long, initiatorRefundTime: Long) : Swap {
+    fun retrieveSwapForResponse(id: String, responderRedeemPKH: ByteArray, responderRefundPKH: ByteArray, responderRefundTime: Long, initiatorRefundTime: Long): Swap {
         val swapFromDB = db.swapDao.load(id)
 
         swapFromDB.apply {
