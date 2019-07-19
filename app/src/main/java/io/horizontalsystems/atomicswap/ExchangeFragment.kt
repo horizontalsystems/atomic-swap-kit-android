@@ -11,18 +11,13 @@ import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.fragment_exchange.*
 
 class ExchangeFragment : Fragment() {
-    private lateinit var mainViewModel: MainViewModel
-    private lateinit var exchangeViewModel: ExchangeViewModel
+    private lateinit var exchangeViewModel: MainViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         activity?.let {
-            mainViewModel = ViewModelProviders.of(it).get(MainViewModel::class.java)
-            exchangeViewModel = ViewModelProviders.of(it).get(ExchangeViewModel::class.java)
-
-            exchangeViewModel.bitcoinKit = mainViewModel.bitcoinKit
-            exchangeViewModel.init()
+            exchangeViewModel = ViewModelProviders.of(it).get(MainViewModel::class.java)
 
             exchangeViewModel.requestText.observe(this, Observer {
                 it?.let {
@@ -32,6 +27,21 @@ class ExchangeFragment : Fragment() {
             exchangeViewModel.responseText.observe(this, Observer {
                 it?.let {
                     textResponse.text = it
+                }
+            })
+            exchangeViewModel.modeLiveData.observe(this, Observer {
+                when (it) {
+                    MainViewModel.Mode.INITIATOR -> {
+                        tabRequest.visibility = View.VISIBLE
+                        tabResponse.visibility = View.GONE
+                        tabInitiate.visibility = View.VISIBLE
+                    }
+                    MainViewModel.Mode.RESPONDER -> {
+                        tabRequest.visibility = View.GONE
+                        tabResponse.visibility = View.VISIBLE
+                        tabInitiate.visibility = View.GONE
+                    }
+                    else -> {}
                 }
             })
         }
@@ -44,7 +54,7 @@ class ExchangeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val coins = ArrayAdapter<String>(this.context, android.R.layout.simple_list_item_1, arrayOf("BTC", "BCH"))
+        val coins = ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, arrayOf("BTC", "BCH"))
 
         fieldHave.adapter = coins
         fieldWant.adapter = coins
@@ -66,6 +76,14 @@ class ExchangeFragment : Fragment() {
         buttonInit.setOnClickListener {
             val response = fieldResponse.text.toString()
             exchangeViewModel.startAtomicSwap(response)
+        }
+
+        modeInitiator.setOnClickListener {
+            exchangeViewModel.setMode(MainViewModel.Mode.INITIATOR)
+        }
+
+        modeResponder.setOnClickListener {
+            exchangeViewModel.setMode(MainViewModel.Mode.RESPONDER)
         }
 
     }

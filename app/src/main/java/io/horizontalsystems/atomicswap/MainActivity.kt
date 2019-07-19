@@ -13,7 +13,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         setContentView(R.layout.activity_main)
 
         //loading the default fragment
-        loadFragment(BalanceFragment())
+        loadFragment(ExchangeFragment())
 
         //getting bottom navigation view and attaching the listener
         val navigation = findViewById<BottomNavigationView>(R.id.navigation)
@@ -22,10 +22,9 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         val fragment: Fragment? = when (item.itemId) {
+            R.id.navigation_exchange -> ExchangeFragment()
             R.id.navigation_home -> BalanceFragment()
             R.id.navigation_transactions -> TransactionsFragment()
-            R.id.navigation_send_receive -> SendReceiveFragment()
-            R.id.navigation_exchange -> ExchangeFragment()
             else -> null
         }
 
