@@ -12,7 +12,7 @@ class SwapKit(context: Context) {
 
     val supportedCoins = swapFactory.supportedCoins
 
-    fun init() {
+    fun load() {
         val swaps = db.swapDao.all()
 
         swaps.forEach {

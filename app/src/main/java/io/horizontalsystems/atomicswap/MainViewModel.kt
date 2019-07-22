@@ -77,7 +77,7 @@ class MainViewModel : ViewModel(), BitcoinKit.Listener {
 
         swapKit.registerSwapBlockchainCreator("BTC", BitcoinSwapBlockchainCreator(bitcoinKit))
         swapKit.registerSwapBlockchainCreator("BCH", BitcoinSwapBlockchainCreator(bitcoinCashKit))
-        swapKit.init()
+        swapKit.load()
         swapKit.processNext()
 
         supportedCoins.value = swapKit.supportedCoins

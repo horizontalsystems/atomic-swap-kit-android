@@ -3,8 +3,8 @@ package io.horizontalsystems.atomicswapcore
 import java.util.logging.Logger
 
 class SwapInitiator(
-    private val sendingBlockchain: ISwapBlockchain,
-    private val receivingBlockchain: ISwapBlockchain,
+    private val initiatorBlockchain: ISwapBlockchain,
+    private val responderBlockchain: ISwapBlockchain,
     private val swap: Swap,
     val db: SwapDatabase
 ) : ISwapBailTxListener {
@@ -41,7 +41,7 @@ class SwapInitiator(
 
     private fun sendInitiatorBailTx() {
         try {
-            val bailTx = sendingBlockchain.sendBailTx(
+            val bailTx = initiatorBlockchain.sendBailTx(
                 swap.responderRedeemPKH,
                 swap.secretHash,
                 swap.initiatorRefundPKH,
@@ -59,7 +59,7 @@ class SwapInitiator(
     }
 
     private fun watchResponderBail() {
-        receivingBlockchain.setBailTxListener(
+        responderBlockchain.setBailTxListener(
             this,
             swap.initiatorRedeemPKH,
             swap.secretHash,
@@ -74,7 +74,7 @@ class SwapInitiator(
 
             if (swap.state != Swap.State.INITIATOR_BAILED) return
 
-            swap.responderBailTx = receivingBlockchain.serializeBailTx(bailTx)
+            swap.responderBailTx = responderBlockchain.serializeBailTx(bailTx)
             swap.state = Swap.State.RESPONDER_BAILED
             db.swapDao.save(swap)
 
@@ -84,9 +84,9 @@ class SwapInitiator(
 
     private fun redeem() {
         try {
-            val responderBailTx = receivingBlockchain.deserializeBailTx(swap.responderBailTx)
+            val responderBailTx = responderBlockchain.deserializeBailTx(swap.responderBailTx)
 
-            val redeemTx = receivingBlockchain.sendRedeemTx(
+            val redeemTx = responderBlockchain.sendRedeemTx(
                 swap.initiatorRedeemPKH,
                 swap.initiatorRedeemPKId,
                 swap.secret,
