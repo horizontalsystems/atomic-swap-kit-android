@@ -1,267 +1,255 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="8dp"
->
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="8dp">
 
     <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
         <RadioGroup
-                android:layout_width="match_parent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/modeInitiator"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:layout_weight="1"
+                android:checked="true"
+                android:text="Initiator" />
 
             <RadioButton
-                    android:id="@+id/modeInitiator"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:checked="true"
-                    android:text="Initiator"/>
-
-            <RadioButton
-                    android:id="@+id/modeResponder"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:text="Responder"/>
+                android:id="@+id/modeResponder"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Responder" />
 
         </RadioGroup>
 
         <androidx.cardview.widget.CardView
-                android:id="@+id/tabRequest"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_constraintTop_toTopOf="parent">
+            android:id="@+id/tabRequest"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent">
 
             <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="8dp">
+
+                <TextView
+                    android:id="@+id/requestHeader"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="8dp">
+                    android:text="Request"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
-                        android:id="@+id/requestHeader"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Request"
-                        app:layout_constraintTop_toTopOf="parent"/>
-
-                <TextView
-                        android:id="@+id/captionHave"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:text="Have"
-                        android:layout_marginTop="12dp"
-                        app:layout_constraintEnd_toStartOf="@id/fieldHave"
-                        app:layout_constraintHorizontal_weight="1"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/requestHeader"/>
+                    android:id="@+id/captionHave"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="Have"
+                    app:layout_constraintEnd_toStartOf="@+id/fieldHave"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintHorizontal_weight="1"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/requestHeader" />
 
                 <Spinner
-                        android:id="@+id/fieldHave"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        app:layout_constraintBaseline_toBaselineOf="@id/captionHave"
-                        app:layout_constraintEnd_toStartOf="@id/captionWant"
-                        app:layout_constraintHorizontal_weight="2"
-                        app:layout_constraintStart_toEndOf="@id/captionHave"/>
+                    android:id="@+id/fieldHave"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/captionHave"
+                    app:layout_constraintEnd_toStartOf="@+id/captionWant"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintHorizontal_weight="2"
+                    app:layout_constraintStart_toEndOf="@+id/captionHave"
+                    app:layout_constraintTop_toTopOf="@+id/captionHave" />
 
                 <TextView
-                        android:id="@+id/captionWant"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:text="Want"
-                        app:layout_constraintBaseline_toBaselineOf="@id/captionHave"
-                        app:layout_constraintEnd_toStartOf="@id/fieldWant"
-                        app:layout_constraintHorizontal_weight="1"
-                        app:layout_constraintStart_toEndOf="@id/fieldHave"/>
+                    android:id="@+id/captionWant"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="Want"
+                    app:layout_constraintBottom_toBottomOf="@+id/fieldHave"
+                    app:layout_constraintEnd_toStartOf="@+id/fieldWant"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintHorizontal_weight="1"
+                    app:layout_constraintStart_toEndOf="@+id/fieldHave"
+                    app:layout_constraintTop_toTopOf="@+id/fieldHave" />
 
                 <Spinner
-                        android:id="@+id/fieldWant"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        app:layout_constraintBaseline_toBaselineOf="@id/captionHave"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintHorizontal_weight="2"
-                        app:layout_constraintStart_toEndOf="@id/captionWant"
-                />
+                    android:id="@+id/fieldWant"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/captionWant"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintHorizontal_weight="2"
+                    app:layout_constraintStart_toEndOf="@+id/captionWant"
+                    app:layout_constraintTop_toTopOf="@+id/captionWant" />
 
                 <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/wrapperRate"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/fieldWant">
+                    android:id="@+id/wrapperRate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/fieldWant">
 
                     <EditText
-                            android:id="@+id/fieldRate"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="Rate"
-                            android:inputType="numberDecimal"
-                    />
+                        android:id="@+id/fieldRate"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Rate"
+                        android:inputType="numberDecimal" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/wrapperValue"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/wrapperRate"
-                >
+                    android:id="@+id/wrapperValue"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/wrapperRate">
 
                     <EditText
-                            android:id="@+id/fieldAmount"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="Amount"
-                            android:inputType="numberDecimal"
-                    />
+                        android:id="@+id/fieldAmount"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Amount"
+                        android:inputType="numberDecimal" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <Button
-                        android:id="@+id/buttonRequest"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Request"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/wrapperValue"
-                />
+                    android:id="@+id/buttonRequest"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Request"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/wrapperValue" />
 
                 <TextView
-                        android:id="@+id/textRequest"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textIsSelectable="true"
-                        app:layout_constraintTop_toBottomOf="@id/buttonRequest"
-                />
+                    android:id="@+id/textRequest"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textIsSelectable="true"
+                    app:layout_constraintTop_toBottomOf="@id/buttonRequest" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
-                android:id="@+id/tabResponse"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_constraintTop_toTopOf="parent"
-                android:layout_marginTop="24dp"
-        >
+            android:id="@+id/tabResponse"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            app:layout_constraintTop_toTopOf="parent">
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="8dp"
-            >
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="8dp">
 
                 <TextView
-                        android:id="@+id/responseHeader"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Response"
-                        app:layout_constraintTop_toTopOf="parent"
-                />
+                    android:id="@+id/responseHeader"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Response"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/wrapperLink"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/responseHeader"
-                >
+                    android:id="@+id/wrapperLink"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/responseHeader">
 
                     <EditText
-                            android:id="@+id/fieldRequest"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="Insert Request"
-                            android:inputType="text"
-                    />
+                        android:id="@+id/fieldRequest"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Insert Request"
+                        android:inputType="text" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
 
                 <Button
-                        android:id="@+id/buttonRespond"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Respond"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/wrapperLink"
-                />
+                    android:id="@+id/buttonRespond"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Respond"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/wrapperLink" />
 
                 <TextView
-                        android:id="@+id/textResponse"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textIsSelectable="true"
-                        app:layout_constraintTop_toBottomOf="@id/buttonRespond"
-                />
+                    android:id="@+id/textResponse"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textIsSelectable="true"
+                    app:layout_constraintTop_toBottomOf="@id/buttonRespond" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
-                android:id="@+id/tabInitiate"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_constraintTop_toTopOf="parent"
-                android:layout_marginTop="24dp"
-        >
+            android:id="@+id/tabInitiate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            app:layout_constraintTop_toTopOf="parent">
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="8dp"
-            >
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="8dp">
 
                 <TextView
-                        android:id="@+id/initiateHeader"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Initiate"
-                        app:layout_constraintTop_toTopOf="parent"
-                />
+                    android:id="@+id/initiateHeader"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Initiate"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/wrapperResponse"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/initiateHeader"
-                >
+                    android:id="@+id/wrapperResponse"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/initiateHeader">
 
                     <EditText
-                            android:id="@+id/fieldResponse"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="Insert Response"
-                            android:inputType="text"
-                    />
+                        android:id="@+id/fieldResponse"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Insert Response"
+                        android:inputType="text" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
 
                 <Button
-                        android:id="@+id/buttonInit"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Initiate"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/wrapperResponse"
-                />
+                    android:id="@+id/buttonInit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Initiate"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/wrapperResponse" />
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>
