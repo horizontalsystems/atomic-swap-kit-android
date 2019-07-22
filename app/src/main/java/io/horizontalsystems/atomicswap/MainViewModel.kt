@@ -214,9 +214,9 @@ class MainViewModel : ViewModel(), BitcoinKit.Listener {
             swapRequest.responderCoinCode,
             "${swapRequest.rate}",
             swapRequest.initiatorAmount,
+            swapRequest.secretHash.toHexString(),
             swapRequest.initiatorRedeemPKH.toHexString(),
-            swapRequest.initiatorRefundPKH.toHexString(),
-            swapRequest.secretHash.toHexString()
+            swapRequest.initiatorRefundPKH.toHexString()
         )
 
         return params.joinToString(separator)
@@ -241,10 +241,10 @@ class MainViewModel : ViewModel(), BitcoinKit.Listener {
     private fun generateResponseString(swapResponse: SwapResponse): String {
         val params = listOf(
             swapResponse.id,
-            swapResponse.responderRedeemPKH.toHexString(),
-            swapResponse.responderRefundPKH.toHexString(),
+            "${swapResponse.initiatorRefundTime}",
             "${swapResponse.responderRefundTime}",
-            "${swapResponse.initiatorRefundTime}"
+            swapResponse.responderRedeemPKH.toHexString(),
+            swapResponse.responderRefundPKH.toHexString()
         )
 
         return params.joinToString(separator)
