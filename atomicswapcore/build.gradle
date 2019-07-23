@@ -47,6 +47,14 @@ dependencies {
     implementation "android.arch.persistence.room:rxjava2:1.1.1"
     kapt "android.arch.persistence.room:compiler:1.1.1"
 
+    testImplementation 'org.mockito:mockito-core:2.23.0'
+    testImplementation 'com.nhaarman:mockito-kotlin-kt1.1:1.6.0'
 
-//    implementation project(':bitcoincore')
+    // spek
+    testImplementation "org.spekframework.spek2:spek-dsl-jvm:2.0.3"
+    testRuntimeOnly "org.spekframework.spek2:spek-runner-junit5:2.0.3"
+
+    // spek requires kotlin-reflect, omit when already in classpath
+    testImplementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+
 }
