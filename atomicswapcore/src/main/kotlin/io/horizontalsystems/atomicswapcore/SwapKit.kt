@@ -57,7 +57,7 @@ class SwapKit(context: Context) {
         )
 
         val atomicSwapResponder = swapFactory.createAtomicSwapResponder(swap)
-        atomicSwapResponder.start()
+        atomicSwapResponder.processNext()
 
         swapResponders[swap.id] = atomicSwapResponder
 
@@ -74,7 +74,7 @@ class SwapKit(context: Context) {
         )
 
         val atomicSwapInitiator = swapFactory.createAtomicSwapInitiator(swap)
-        atomicSwapInitiator.start()
+        atomicSwapInitiator.processNext()
 
         swapInitiators[swap.id] = atomicSwapInitiator
     }

@@ -2,44 +2,40 @@ package io.horizontalsystems.atomicswapcore
 
 import java.util.logging.Logger
 
-class SwapInitiator(
+class SwapInitiator(private val swapInitiatorDoer: SwapInitiatorDoer) {
+
+    fun processNext() = when (swapInitiatorDoer.state) {
+        Swap.State.REQUESTED -> {
+        }
+        Swap.State.RESPONDED -> {
+            swapInitiatorDoer.bail()
+        }
+        Swap.State.INITIATOR_BAILED -> {
+            swapInitiatorDoer.watchResponderBail()
+        }
+        Swap.State.RESPONDER_BAILED -> {
+            swapInitiatorDoer.redeem()
+        }
+        Swap.State.INITIATOR_REDEEMED -> {
+        }
+        Swap.State.RESPONDER_REDEEMED -> {
+        }
+    }
+}
+
+class SwapInitiatorDoer(
     private val initiatorBlockchain: ISwapBlockchain,
     private val responderBlockchain: ISwapBlockchain,
     private val swap: Swap,
-    val db: SwapDatabase
+    private val storage: SwapDao
 ) : ISwapBailTxListener {
+
+    lateinit var delegate: SwapInitiator
+    val state get() = swap.state
 
     private val logger = Logger.getLogger("AS-Initiator")
 
-    fun processNext() {
-        logger.info("Proceed initiator ${swap.id} with state ${swap.state}")
-
-        when (swap.state) {
-            Swap.State.REQUESTED -> {
-            }
-            Swap.State.RESPONDED -> {
-                start()
-            }
-            Swap.State.INITIATOR_BAILED -> {
-                watchResponderBail()
-            }
-            Swap.State.RESPONDER_BAILED -> {
-                redeem()
-            }
-            Swap.State.INITIATOR_REDEEMED -> {
-            }
-            Swap.State.RESPONDER_REDEEMED -> {
-            }
-        }
-    }
-
-    fun start() {
-        logger.info("Started initiator for swap ${swap.id}")
-        sendInitiatorBailTx()
-        watchResponderBail()
-    }
-
-    private fun sendInitiatorBailTx() {
+    fun bail() {
         try {
             val bailTx = initiatorBlockchain.sendBailTx(
                 swap.responderRedeemPKH,
@@ -50,15 +46,17 @@ class SwapInitiator(
             )
 
             swap.state = Swap.State.INITIATOR_BAILED
-            db.swapDao.save(swap)
+            storage.save(swap)
 
             logger.info("Sent initiator bail tx $bailTx")
+
+            delegate.processNext()
         } catch (e: Exception) {
 
         }
     }
 
-    private fun watchResponderBail() {
+    fun watchResponderBail() {
         responderBlockchain.setBailTxListener(
             this,
             swap.initiatorRedeemPKH,
@@ -76,13 +74,13 @@ class SwapInitiator(
 
             swap.responderBailTx = responderBlockchain.serializeBailTx(bailTx)
             swap.state = Swap.State.RESPONDER_BAILED
-            db.swapDao.save(swap)
+            storage.save(swap)
 
-            redeem()
+            delegate.processNext()
         }
     }
 
-    private fun redeem() {
+    fun redeem() {
         try {
             val responderBailTx = responderBlockchain.deserializeBailTx(swap.responderBailTx)
 
@@ -97,9 +95,11 @@ class SwapInitiator(
             )
 
             swap.state = Swap.State.INITIATOR_REDEEMED
-            db.swapDao.save(swap)
+            storage.save(swap)
 
             logger.info("Sent initiator redeem tx $redeemTx")
+
+            delegate.processNext()
         } catch (e: Exception) {
 
         }

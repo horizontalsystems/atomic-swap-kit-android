@@ -20,14 +20,22 @@ class SwapFactory(private val db: SwapDatabase) {
         val initiatorBlockchain = createBlockchain(swap.initiatorCoinCode)
         val responderBlockchain = createBlockchain(swap.responderCoinCode)
 
-        return SwapResponder(initiatorBlockchain, responderBlockchain, swap, db)
+        val swapResponderDoer = SwapResponderDoer(initiatorBlockchain, responderBlockchain, swap, db.swapDao)
+        val swapResponder = SwapResponder(swapResponderDoer)
+        swapResponderDoer.delegate = swapResponder
+
+        return swapResponder
     }
 
     fun createAtomicSwapInitiator(swap: Swap): SwapInitiator {
         val initiatorBlockchain = createBlockchain(swap.initiatorCoinCode)
         val responderBlockchain = createBlockchain(swap.responderCoinCode)
 
-        return SwapInitiator(initiatorBlockchain, responderBlockchain, swap, db)
+        val swapInitiatorDoer = SwapInitiatorDoer(initiatorBlockchain, responderBlockchain, swap, db.swapDao)
+        val swapInitiator = SwapInitiator(swapInitiatorDoer)
+        swapInitiatorDoer.delegate = swapInitiator
+
+        return swapInitiator
     }
 
     fun createSwap(initiatorCoinCode: String, responderCoinCode: String, rate: Double, amount: Double): Swap {
