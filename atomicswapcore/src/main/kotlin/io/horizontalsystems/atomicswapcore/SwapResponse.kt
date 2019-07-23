@@ -2,18 +2,18 @@ package io.horizontalsystems.atomicswapcore
 
 class SwapResponse(
     val id: String,
-    val responderRedeemPKH: ByteArray,
-    val responderRefundPKH: ByteArray,
+    val initiatorRefundTime: Long,
     val responderRefundTime: Long,
-    val initiatorRefundTime: Long
+    val responderRedeemPKH: ByteArray,
+    val responderRefundPKH: ByteArray
 ) {
 
     constructor(swap: Swap) : this(
         swap.id,
-        swap.responderRedeemPKH,
-        swap.responderRefundPKH,
+        swap.initiatorRefundTime,
         swap.responderRefundTime,
-        swap.initiatorRefundTime
+        swap.responderRedeemPKH,
+        swap.responderRefundPKH
     )
 
 }

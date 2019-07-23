@@ -1,6 +1,5 @@
 package io.horizontalsystems.atomicswap
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import io.horizontalsystems.atomicswapbitcoin.BitcoinSwapBlockchainCreator
@@ -200,11 +199,7 @@ class MainViewModel : ViewModel(), BitcoinKit.Listener {
     }
 
     fun startAtomicSwap(response: String) {
-        try {
-            swapKit.initiateSwap(parseFromResponseString(response))
-        } catch (e: Exception) {
-            Log.e("AAA", "$e")
-        }
+        swapKit.initiateSwap(parseFromResponseString(response))
     }
 
     private fun generateRequestString(swapRequest: SwapRequest): String {
@@ -256,10 +251,10 @@ class MainViewModel : ViewModel(), BitcoinKit.Listener {
 
         return SwapResponse(
             paramsIterator.next(),
-            paramsIterator.next().hexToByteArray(),
-            paramsIterator.next().hexToByteArray(),
             paramsIterator.next().toLong(),
-            paramsIterator.next().toLong()
+            paramsIterator.next().toLong(),
+            paramsIterator.next().hexToByteArray(),
+            paramsIterator.next().hexToByteArray()
         )
     }
 
