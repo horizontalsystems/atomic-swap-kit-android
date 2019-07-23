@@ -66,7 +66,7 @@ class SwapResponderDoer(
 
     fun bail() {
         try {
-            val amount = "${swap.initiatorAmount.toDouble() / swap.rate}"
+            val amount = "${swap.initiatorAmount.toDouble() * swap.rate}"
 
             val responderBailTx = responderBlockchain.sendBailTx(
                 swap.initiatorRedeemPKH,

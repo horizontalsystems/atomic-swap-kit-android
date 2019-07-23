@@ -34,17 +34,13 @@ class SwapScriptBuilder {
         return byteArrayOf() +
                 opCodeByte(OP_IF) +
                 opCodeByte(OP_SIZE) + OpCodes.push(byteArrayOf(0x20)) +
-                opCodeByte(OP_EQUALVERIFY) + opCodeByte(OP_SHA256) + OpCodes.push(
-            secretHash
-        ) +
+                opCodeByte(OP_EQUALVERIFY) + opCodeByte(OP_SHA256) + OpCodes.push(secretHash) +
                 opCodeByte(OP_EQUALVERIFY) + opCodeByte(OP_DUP) + opCodeByte(OP_HASH160) +
                 OpCodes.push(redeemPKH) +
                 opCodeByte(OP_ELSE) +
                 OpCodes.push(Utils.intToByteArray(refundTime.toInt()).reversedArray()) +
                 opCodeByte(OP_CHECKLOCKTIMEVERIFY) +
-                opCodeByte(OP_DROP) + opCodeByte(OP_DUP) + opCodeByte(OP_HASH160) + OpCodes.push(
-            refundPKH
-        ) +
+                opCodeByte(OP_DROP) + opCodeByte(OP_DUP) + opCodeByte(OP_HASH160) + OpCodes.push(refundPKH) +
                 opCodeByte(OP_ENDIF) +
                 opCodeByte(OP_EQUALVERIFY) + opCodeByte(OP_CHECKSIG)
     }
