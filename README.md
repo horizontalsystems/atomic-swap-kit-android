@@ -51,7 +51,7 @@ swapKit.initiateSwap(swapResponse)
 
 ### Initiator and Responder Communication
 
-The Swap Request and Swap Response are the simple data objects. They can be easily serialized into/parsed from strings and interchanged via standard apps, like messangers/email.
+The Swap Request and Swap Response are the simple data objects. They can be easily serialized into/parsed from strings and interchanged via standard apps, like messenger or email.
 
 ## Prerequisites
 * JDK >= 1.8
