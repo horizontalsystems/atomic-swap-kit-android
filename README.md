@@ -46,9 +46,12 @@ Creating response also starts the swap process in the Responder side.
 Initiator takes response and starts the swap
 
 ```kotlin
-swapKit.initiateSwap(parseFromResponseString(response))
+swapKit.initiateSwap(swapResponse)
 ```
 
+### Initiator and Responder Communication
+
+The Swap Request and Swap Response are the simple data objects. They can be easily serialized into strings and interchanged via standard apps, like messangers/email.
 
 ## Prerequisites
 * JDK >= 1.8
